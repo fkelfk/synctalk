@@ -5,17 +5,17 @@ import { UserDTO } from './dto/user.dto';
 import { UserEntity } from './entitiy/user.entity';
 import { Repository } from 'typeorm';
 import * as bcrypt from 'bcrypt';
+import { UserRepository } from './user.repository';
 
 @Injectable()
 export class UserService {
   constructor(
-    @InjectRepository(UserEntity)
-    private userRepository: Repository<UserEntity>,
+    private userRepository: UserRepository,
   ) {}
 
   async findByFields(
-    options: FindOneOptions<UserDTO>,
-  ): Promise<UserDTO | undefined> {
+    options: FindOneOptions<UserDTO|UserEntity>,
+  ): Promise<UserEntity | undefined> {
     return await this.userRepository.findOne(options);
   }
 

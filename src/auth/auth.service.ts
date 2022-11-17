@@ -5,6 +5,7 @@ import { UnauthorizedException } from '@nestjs/common';
 import * as bcrypt from 'bcrypt';
 import { Payload } from './security/payload.interface';
 import { JwtService } from '@nestjs/jwt';
+import { UserEntity } from './entitiy/user.entity';
 
 @Injectable()
 export class AuthService {
@@ -30,7 +31,7 @@ export class AuthService {
   async validateUser(
     userDTO: UserDTO,
   ): Promise<{ accessToken: string } | undefined> {
-    let userFind: UserDTO = await this.userService.findByFields({
+    let userFind: UserEntity = await this.userService.findByFields({
       where: {
         username: userDTO.username,
       },

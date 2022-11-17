@@ -4,7 +4,7 @@ import { AuthService } from './auth.service';
 import { UserDTO } from './dto/user.dto';
 import { AuthGuard } from './security/auth.guard';
 
-@Controller('api')
+@Controller('auth')
 export class AuthController {
   constructor(private authService: AuthService) {}
 
