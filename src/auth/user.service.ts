@@ -2,19 +2,17 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { FindOneOptions } from 'typeorm';
 import { UserDTO } from './dto/user.dto';
-import { UserEntity } from './entitiy/user.entity';
+import { UserEntity } from '../domain/user.entity';
 import { Repository } from 'typeorm';
 import * as bcrypt from 'bcrypt';
 import { UserRepository } from './user.repository';
 
 @Injectable()
 export class UserService {
-  constructor(
-    private userRepository: UserRepository,
-  ) {}
+  constructor(private userRepository: UserRepository) {}
 
   async findByFields(
-    options: FindOneOptions<UserDTO|UserEntity>,
+    options: FindOneOptions<UserDTO | UserEntity>,
   ): Promise<UserEntity | undefined> {
     return await this.userRepository.findOne(options);
   }

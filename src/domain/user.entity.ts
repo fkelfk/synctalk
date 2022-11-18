@@ -2,7 +2,7 @@ import { Column, Entity, PrimaryGeneratedColumn, OneToMany } from 'typeorm';
 import { UserAuthority } from './user-authority.entity';
 
 @Entity('user')
-export class UserEntity{
+export class UserEntity {
   @PrimaryGeneratedColumn()
   id: number;
 
@@ -12,6 +12,8 @@ export class UserEntity{
   @Column()
   password: string;
 
-  @OneToMany(()=>UserAuthority, userAuthority => userAuthority.user, {eager: true})
+  @OneToMany(() => UserAuthority, (userAuthority) => userAuthority.user, {
+    eager: true,
+  })
   authorities?: any[];
 }

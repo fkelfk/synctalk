@@ -3,49 +3,11 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { AuthModule } from './auth/auth.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { UserEntity } from './auth/entitiy/user.entity';
-import { UserAuthority } from './auth/entitiy/user-authority.entity';
+import { ormConfig } from './config/orm.config';
 
 @Module({
-  imports: [
-    TypeOrmModule.forRoot({
-      type: 'postgres',
-      host: 'localhost',
-      port: 5432,
-      username: 'postgres',
-      password: 'aleh',
-      database: 'downbit',
-      entities: [UserEntity, UserAuthority],
-      synchronize: false,
-      logging: true,
-    }),
-    AuthModule,
-  ],
+  imports: [TypeOrmModule.forRootAsync({ useFactory: ormConfig }), AuthModule],
   controllers: [AppController],
   providers: [AppService],
 })
 export class AppModule {}
-// @Module({
-//   imports: [
-//     TypeOrmModule.forRoot({
-//       type: 'postgres',
-//       host: 'localhost',
-//       port: 5432,
-//       username: 'postgres',
-//       password: 'aleh',
-//       database: 'downbit',
-//       // entities: ['src/**/*.entity.{ts,js}'],
-//       entities: [UserEntity],
-//       migrations: ['src/migrations/**/*.{ts,js}'],
-//       cli: {
-//         entitiesDir: 'src/modules',
-//         migrationsDir: 'src/migrations',
-//       },
-//       synchronize: true,
-//     }),
-//     AuthModule,
-//   ],
-//   controllers: [AppController],
-//   providers: [AppService],
-// })
-// export class AppModule {}
