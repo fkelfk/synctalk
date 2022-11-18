@@ -1,4 +1,5 @@
-import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import { Column, Entity, PrimaryGeneratedColumn, OneToMany } from 'typeorm';
+import { UserAuthority } from './user-authority.entity';
 
 @Entity('user')
 export class UserEntity{
@@ -10,4 +11,7 @@ export class UserEntity{
 
   @Column()
   password: string;
+
+  @OneToMany(()=>UserAuthority, userAuthority => userAuthority.user, {eager: true})
+  authorities?: any[];
 }
