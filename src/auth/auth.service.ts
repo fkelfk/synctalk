@@ -23,11 +23,7 @@ export class AuthService {
     }
     return this.userService.save(newUser);
   }
-  async tokenValidateUser(payload: Payload): Promise<UserDTO | undefined> {
-    return await this.userService.findByFields({
-      where: { id: payload.id },
-    });
-  }
+
   async validateUser(
     userDTO: UserDTO,
   ): Promise<{ accessToken: string } | undefined> {
@@ -43,11 +39,43 @@ export class AuthService {
     if (!userFind || !validatePassword) {
       throw new UnauthorizedException();
     }
+    this.convertInAuthorities(userFind);
 
-    const payload = { id: userFind.id, username: userFind.username };
+    const payload: Payload = {
+      id: userFind.id,
+      username: userFind.username,
+      authorities: userFind.authorities,
+    };
 
     return {
       accessToken: this.jwtServicee.sign(payload),
     };
+  }
+  async tokenValidateUser(payload: Payload): Promise<UserDTO | undefined> {
+    const userFind = await this.userService.findByFields({
+      where: { id: payload.id },
+    });
+    this.flatAuthorities(userFind);
+    return userFind;
+  }
+  private flatAuthorities(user: any): UserEntity {
+    if (user && user.authorities) {
+      const authorities: string[] = [];
+      user.authorities.forEach((authority) => {
+        authorities.push(authority.authorityName);
+      });
+      user.authorities = authorities;
+    }
+    return user;
+  }
+  private convertInAuthorities(user: any): UserEntity {
+    if (user && user.authorities) {
+      const authorities: any[] = [];
+      user.authorities.forEach((authority) => {
+        authorities.push({ name: authority.authorityName });
+      });
+      user.authorities = authorities;
+    }
+    return user;
   }
 }
