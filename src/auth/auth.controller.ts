@@ -6,6 +6,8 @@ import {
   Req,
   Res,
   UseGuards,
+  UsePipes,
+  ValidationPipe,
 } from '@nestjs/common';
 import { Response, Request } from 'express';
 import { Roles } from 'src/decorator/role.decorator';
@@ -20,6 +22,7 @@ export class AuthController {
   constructor(private authService: AuthService) {}
 
   @Post('/register')
+  @UsePipes(ValidationPipe)
   async registerAccount(
     @Req() req: Request,
     @Body() userDTO: UserDTO,
