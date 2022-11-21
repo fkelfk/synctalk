@@ -8,8 +8,10 @@ import {
   UseGuards,
   UsePipes,
   ValidationPipe,
+  BadRequestException,
+  UnauthorizedException,
 } from '@nestjs/common';
-import { Response, Request } from 'express';
+import { Response, Request, response } from 'express';
 import { Roles } from 'src/decorator/role.decorator';
 import { RoleType } from 'src/role-type';
 import { AuthService } from './auth.service';
@@ -61,5 +63,30 @@ export class AuthController {
   getCookies(@Req() req: Request, @Res() res: Response): any {
     const jwt = req.cookies['jwt'];
     return res.send(jwt);
+  }
+
+  @Post('/kakao')
+  async kakao(@Body() body: any, @Res() res: Response): Promise<any> {
+      try {
+      // 카카오 토큰 조회 후 계정 정보 가져오기
+      const { code, domain } = body;
+      if (!code || !domain) {
+          throw new BadRequestException('카카오 정보가 없습니다.');
+      }
+      const kakao = await this.authService.kakaoLogin({ code, domain });
+
+      console.log(`kakaoUserInfo : ${JSON.stringify(kakao)}`);
+      if (!kakao.id) {
+          throw new BadRequestException('카카오 정보가 없습니다.');
+      }
+
+      res.send({
+          user: kakao,
+          message: 'success',
+      });
+      } catch (e) {
+          console.log(e);
+          throw new UnauthorizedException();
+      }
   }
 }
