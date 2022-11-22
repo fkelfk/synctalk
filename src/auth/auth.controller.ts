@@ -77,11 +77,14 @@ export class AuthController {
 
       console.log(`kakaoUserInfo : ${JSON.stringify(kakao)}`);
       if (!kakao.id) {
-          throw new BadRequestException('카카오 정보가 없습니다.');
+          throw new BadRequestException('카카오 로그인 실패.');
       }
 
+      const jwt = await this.authService.login(kakao);
+
+
       res.send({
-          user: kakao,
+          accessToken: jwt.accessToken,
           message: 'success',
       });
       } catch (e) {

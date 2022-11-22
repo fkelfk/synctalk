@@ -13,7 +13,7 @@ import * as qs from 'qs';
 export class AuthService {
   constructor(
     private userService: UserService,
-    private jwtServicee: JwtService,
+    private jwtService: JwtService,
   ) {}
 
   async registerNewUser(newUser: UserDTO): Promise<UserDTO> {
@@ -50,7 +50,7 @@ export class AuthService {
     };
 
     return {
-      accessToken: this.jwtServicee.sign(payload),
+      accessToken: this.jwtService.sign(payload),
     };
   }
   async tokenValidateUser(payload: Payload): Promise<UserDTO | undefined> {
@@ -102,36 +102,49 @@ export class AuthService {
         headers,
         data: qs.stringify(body),
       });
-      if (response.status === 200) {
-        console.log(`kakaoToken : ${JSON.stringify(response.data)}`);
-        // Token 을 가져왔을 경우 사용자 정보 조회
-        const headerUserInfo = {
-          'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8',
-          Authorization: 'Bearer ' + response.data.access_token,
-        };
-        console.log(`url : ${kakaoTokenUrl}`);
-        console.log(`headers : ${JSON.stringify(headerUserInfo)}`);
-        const responseUserInfo = await axios({
-          method: 'GET',
-          url: kakaoUserInfoUrl,
-          timeout: 30000,
-          headers: headerUserInfo,
-        });
-        console.log(`responseUserInfo.status : ${responseUserInfo.status}`);
-        if (responseUserInfo.status === 200) {
-          console.log(
-            `kakaoUserInfo : ${JSON.stringify(responseUserInfo.data)}`,
-          );
-          return responseUserInfo.data;
-        } else {
-          throw new UnauthorizedException();
-        }
+      console.log(response);
+      // Token 을 가져왔을 경우 사용자 정보 조회
+      const headerUserInfo = {
+        'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8',
+        Authorization: 'Bearer ' + response.data.access_token,
+      };
+      const responseUserInfo = await axios({
+        method: 'GET',
+        url: kakaoUserInfoUrl,
+        timeout: 30000,
+        headers: headerUserInfo,
+      });
+      console.log(responseUserInfo);
+      if (responseUserInfo.status === 200) {
+        return responseUserInfo.data;
       } else {
         throw new UnauthorizedException();
       }
     } catch (error) {
       console.log(error);
-      throw new UnauthorizedException();
     }
+  }
+
+  async login(kakao: any): Promise<{ accessToken: string } | undefined> {
+    let userFind: UserEntity = await this.userService.findByFields({
+      where: { kakaoId: kakao.id },
+    });
+    if (!userFind) {
+      const kakaoUser = new UserEntity();
+      kakaoUser.kakaoId = kakao.id;
+      kakaoUser.email = kakao.kakao_account.email;
+      kakaoUser.name = kakao.kakao_account.name;
+      userFind = await this.userService.registerUser(kakaoUser);
+    }
+
+    const payload: Payload = {
+      id: userFind.id,
+      username: userFind.name,
+      authorities: userFind.authorities,
+    };
+
+    return {
+      accessToken: this.jwtService.sign(payload),
+    };
   }
 }
