@@ -8,7 +8,6 @@ import * as bcrypt from 'bcrypt';
 import { UserRepository } from './user.repository';
 import { UserAuthority } from 'src/domain/user-authority.entity';
 import { RoleType } from 'src/role-type';
-import { response } from 'express';
 
 @Injectable()
 export class UserService {
@@ -50,7 +49,7 @@ export class UserService {
   }
 
   async save(userDTO: UserDTO): Promise<UserEntity | undefined> {
-    await this.transformPassword(userDTO);
+    if (userDTO.password)await this.transformPassword(userDTO);
     return await this.userRepository.save(userDTO);
   }
 }

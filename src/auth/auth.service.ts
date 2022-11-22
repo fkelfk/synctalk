@@ -103,7 +103,6 @@ export class AuthService {
         data: qs.stringify(body),
       });
       console.log(response);
-      // Token 을 가져왔을 경우 사용자 정보 조회
       const headerUserInfo = {
         'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8',
         Authorization: 'Bearer ' + response.data.access_token,
