@@ -10,19 +10,19 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
     super({
       jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
       ignoreExpiration: true,
-      secretOrKey: 'SECRET_KEY',
+      secretOrKey: process.env.SECRET_KEY
     });
   }
 
-  async validate(payload: Payload, done: VerifiedCallback): Promise<any> {
-    const user = await this.authService.tokenValidateUser(payload);
-    if (!user) {
-      return done(
-        new UnauthorizedException({ message: 'user does not exist' }),
-        false,
-      );
-    }
+  // async validate(payload: Payload, done: VerifiedCallback): Promise<any> {
+  //   const user = await this.authService.tokenValidateUser(payload);
+  //   if (!user) {
+  //     return done(
+  //       new UnauthorizedException({ message: 'user does not exist' }),
+  //       false,
+  //     );
+  //   }
 
-    return done(null, user);
-  }
+  //   return done(null, user);
+  // }
 }
