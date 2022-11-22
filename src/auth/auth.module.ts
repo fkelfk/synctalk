@@ -20,7 +20,7 @@ import { UserAuthorityRepository } from './repository/user-autority.repository';
       UserAuthorityRepository,
     ]),
     JwtModule.register({
-      secret: process.env.SECRET_KEY,
+      secret: 'secret',
       signOptions: { expiresIn: '3000s' },
     }),
     PassportModule,

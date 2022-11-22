@@ -6,16 +6,16 @@ export class UserEntity {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column()
+  @Column('varchar', { name: 'username',  nullable: true, length: 45 })
   username: string;
 
-  @Column()
+  @Column('varchar', { name: 'password',  nullable: true, length: 200 })
   password: string;
 
-  @Column('varchar', { name: 'kakao_id', length: 45 })
+  @Column('varchar', { name: 'kakao_id',  nullable: true, length: 45 })
   kakaoId: string;
 
-  @Column('varchar', { name: 'email', length: 100 })
+  @Column('varchar', { name: 'email',  nullable: true, length: 100 })
   email: string;
 
   @Column('varchar', { name: 'name', nullable: true, length: 45 })
