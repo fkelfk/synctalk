@@ -1,9 +1,9 @@
-import { Column, Entity, JoinColumn, ManyToOne, PrimaryColumn } from 'typeorm';
+import { Column, Entity, JoinColumn, ManyToOne, PrimaryColumn, PrimaryGeneratedColumn } from 'typeorm';
 import { UserEntity } from './user.entity';
 
 @Entity('user_authority')
 export class UserAuthority {
-  @PrimaryColumn()
+  @PrimaryGeneratedColumn()
   id: number;
 
   @Column('int', { name: 'user_id' })
@@ -12,7 +12,7 @@ export class UserAuthority {
   @Column('varchar', { name: 'authority_name' })
   authorityName: string;
 
-  @ManyToOne((type) => UserEntity, (user) => user.authorities)
+  @ManyToOne(() => UserEntity, (user) => user.authorities)
   @JoinColumn({ name: 'user_id', referencedColumnName: 'id' })
   user: UserEntity;
 }

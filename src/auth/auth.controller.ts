@@ -11,7 +11,7 @@ import {
   BadRequestException,
   UnauthorizedException,
 } from '@nestjs/common';
-import { Response, Request, response } from 'express';
+import { Response, Request} from 'express';
 import { Roles } from 'src/decorator/role.decorator';
 import { RoleType } from 'src/role-type';
 import { AuthService } from './auth.service';
