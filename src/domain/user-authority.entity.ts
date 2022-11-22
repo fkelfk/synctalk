@@ -13,6 +13,6 @@ export class UserAuthority {
   authorityName: string;
 
   @ManyToOne((type) => UserEntity, (user) => user.authorities)
-  @JoinColumn({ name: 'user_id' })
+  @JoinColumn({ name: 'user_id', referencedColumnName: 'id' })
   user: UserEntity;
 }
