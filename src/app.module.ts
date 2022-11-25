@@ -6,6 +6,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { ormConfig } from './config/orm.config';
 import { ConfigModule } from '@nestjs/config';
 import { ApiModule } from './api/api.module';
+import { RoomsModule } from './rooms/rooms.module';
 import config from './config/config';
 
 @Module({
@@ -17,6 +18,7 @@ import config from './config/config';
     TypeOrmModule.forRootAsync({ useFactory: ormConfig }),
     AuthModule,
     ApiModule,
+    RoomsModule,
   ],
   controllers: [AppController],
   providers: [AppService],

@@ -1,4 +1,5 @@
 import { Column, Entity, PrimaryGeneratedColumn, OneToMany } from 'typeorm';
+import { RoomEntity } from './room.entity';
 import { UserAuthority } from './user-authority.entity';
 
 @Entity('user')
@@ -6,16 +7,16 @@ export class UserEntity {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column('varchar', { name: 'username',  nullable: true, length: 45 })
+  @Column('varchar', { name: 'username', nullable: true, length: 45 })
   username: string;
 
-  @Column('varchar', { name: 'password',  nullable: true, length: 200 })
+  @Column('varchar', { name: 'password', nullable: true, length: 200 })
   password: string;
 
-  @Column('varchar', { name: 'kakao_id',  nullable: true, length: 45 })
+  @Column('varchar', { name: 'kakao_id', nullable: true, length: 45 })
   kakaoId: string;
 
-  @Column('varchar', { name: 'email',  nullable: true, length: 100 })
+  @Column('varchar', { name: 'email', nullable: true, length: 100 })
   email: string;
 
   @Column('varchar', { name: 'name', nullable: true, length: 45 })
@@ -51,4 +52,9 @@ export class UserEntity {
     eager: true,
   })
   authorities?: any[];
+
+  @OneToMany(() => RoomEntity, (room) => room.user, {
+    eager: true,
+  })
+  room: RoomEntity[];
 }
