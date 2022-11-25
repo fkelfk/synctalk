@@ -82,7 +82,7 @@ export class AuthService {
   }
   async kakaoLogin(options: { code: string; domain: string }): Promise<any> {
     const { code, domain } = options;
-    const kakaoKey = 'c251dbcee34f1d4f7efd4fee1073ba04';
+    const kakaoKey = process.env.KAKAO_KEY;
     const kakaoTokenUrl = 'https://kauth.kakao.com/oauth/token';
     const kakaoUserInfoUrl = 'https://kapi.kakao.com/v2/user/me';
     const body = {
@@ -102,7 +102,6 @@ export class AuthService {
         headers,
         data: qs.stringify(body),
       });
-      console.log(response);
       const headerUserInfo = {
         'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8',
         Authorization: 'Bearer ' + response.data.access_token,
