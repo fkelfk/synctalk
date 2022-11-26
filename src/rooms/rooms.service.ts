@@ -46,6 +46,15 @@ export class RoomsService {
     }
   }
 
+  async updateRoom(id: number, room: RoomDTO, user: number): Promise<void> {
+    const existingRoom = await this.roomRepository.findOne({ where: { id } });
+    if (existingRoom.user.id === user) {
+      await this.roomRepository.update(id, room);
+    } else {
+      throw new UnauthorizedException(`This room is not yours`);
+    }
+  }
+
   async save(room: RoomDTO): Promise<RoomEntity> {
     return await this.roomRepository.save(room);
   }

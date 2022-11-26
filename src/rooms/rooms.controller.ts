@@ -46,8 +46,16 @@ export class RoomsController {
   @Delete('/:id')
   @UseGuards(AuthGuard, RolesGuard)
   @Roles(RoleType.USER)
-  async deleteRoom(@Req() req, @Param('id') id) {
+  async deleteRoom(@Req() req, @Param('id') id): Promise<void> {
     const user = req.user;
     return this.roomsService.deleteRoom(id, user.id);
+  }
+
+  @Patch('/:id')
+  @UseGuards(AuthGuard, RolesGuard)
+  @Roles(RoleType.USER)
+  async updateRoom(@Req() req, @Body() room: RoomDTO,  @Param('id') id) : Promise<void> {
+    const user = req.user;
+    return this.roomsService.updateRoom(id, room, user.id);
   }
 }
