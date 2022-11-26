@@ -55,6 +55,7 @@ export class UserEntity {
 
   @OneToMany(() => RoomEntity, (room) => room.user, {
     eager: true,
+    cascade: true,
   })
   room: RoomEntity[];
 }

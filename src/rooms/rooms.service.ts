@@ -1,4 +1,8 @@
-import { Injectable } from '@nestjs/common';
+import {
+  Injectable,
+  NotFoundException,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { RoomEntity } from 'src/domain/room.entity';
 import { UserEntity } from 'src/domain/user.entity';
@@ -32,6 +36,14 @@ export class RoomsService {
   async getRoom(id: number): Promise<RoomEntity> {
     const room = await this.roomRepository.findOne({ where: { id } });
     return room;
+  }
+
+  async deleteRoom(id: number, user: UserEntity): Promise<void> {
+    const result = await this.roomRepository.delete({ id, user });
+
+    if (result.affected === 0) {
+      throw new UnauthorizedException(`This room is not yours`);
+    }
   }
 
   async save(room: RoomDTO): Promise<RoomEntity> {

@@ -7,6 +7,9 @@ import {
   Get,
   Param,
   Query,
+  Delete,
+  Put,
+  Patch,
 } from '@nestjs/common';
 import { RoomsService } from './rooms.service';
 import { Roles } from 'src/decorator/role.decorator';
@@ -16,6 +19,7 @@ import { RoleType } from 'src/role-type';
 import { RoomEntity } from 'src/domain/room.entity';
 import { RoomDTO } from './dto/room.dto';
 import { PaginationParams } from '../utils/types/paginationParams';
+import { UserEntity } from 'src/domain/user.entity';
 
 @Controller('rooms')
 export class RoomsController {
@@ -30,14 +34,20 @@ export class RoomsController {
   }
 
   @Get('/main')
-  async getAllRoom(
-    @Query() { offset, limit }: PaginationParams
-  ) {
-    return this.roomsService.getAllRoom(offset, limit);
+  async getAllRoom(@Query() { offset, limit }: PaginationParams) {
+    return await this.roomsService.getAllRoom(offset, limit);
   }
 
   @Get('/:id')
   async getRoom(@Param('id') id: number): Promise<RoomEntity> {
-    return this.roomsService.getRoom(id);
+    return await this.roomsService.getRoom(id);
+  }
+
+  @Delete('/:id')
+  @UseGuards(AuthGuard, RolesGuard)
+  @Roles(RoleType.USER)
+  async deleteRoom(@Req() req, @Param('id') id) {
+    const user = req.user;
+    return this.roomsService.deleteRoom(id, user.id);
   }
 }
