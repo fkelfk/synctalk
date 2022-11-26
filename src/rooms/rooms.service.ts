@@ -11,16 +11,30 @@ export class RoomsService {
     @InjectRepository(RoomEntity) private roomRepository: RoomRepository,
   ) {}
 
-    async createRoom(room: RoomDTO, user: UserEntity): Promise<RoomEntity> {
-      const roominfo = new RoomEntity();
-      roominfo.title = room.title,
-      roominfo.description = room.description,
-      roominfo.user = user
+  async createRoom(room: RoomDTO, user: UserEntity): Promise<RoomEntity> {
+    const roominfo = new RoomEntity();
+    (roominfo.title = room.title),
+      (roominfo.description = room.description),
+      (roominfo.user = user);
 
-      return await this.save(roominfo)
-    }
+    return await this.save(roominfo);
+  }
 
-    async save(room: RoomDTO): Promise<RoomEntity> {
-      return await this.roomRepository.save(room);
-    }
+  async getAllRoom(offset?: number, limit?: number) {
+    const [items, count] = await this.roomRepository.findAndCount({
+      skip: offset,
+      take: limit,
+    });
+
+    return { items, count };
+  }
+
+  async getRoom(id: number): Promise<RoomEntity> {
+    const room = await this.roomRepository.findOne({ where: { id } });
+    return room;
+  }
+
+  async save(room: RoomDTO): Promise<RoomEntity> {
+    return await this.roomRepository.save(room);
+  }
 }
