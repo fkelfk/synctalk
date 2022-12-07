@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { CacheModule, Module } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { AuthModule } from './auth/auth.module';
@@ -8,6 +8,7 @@ import { ConfigModule } from '@nestjs/config';
 import { ApiModule } from './api/api.module';
 import { RoomsModule } from './rooms/rooms.module';
 import config from './config/config';
+import * as redisStore from 'cache-manager-ioredis';
 
 @Module({
   imports: [
@@ -19,6 +20,25 @@ import config from './config/config';
     AuthModule,
     ApiModule,
     RoomsModule,
+    CacheModule.register({
+      store: redisStore,
+      clusterConfig: {
+        nodes: [
+          {
+            port: 7000,
+            host: '127.0.0.1',
+          },
+          {
+            port: 7001,
+            host: '127.0.0.1',
+          },
+          {
+            port: 7002,
+            host: '127.0.0.1',
+          },
+        ],
+      },
+    }),
   ],
   controllers: [AppController],
   providers: [AppService],
