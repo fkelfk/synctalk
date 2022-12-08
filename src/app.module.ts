@@ -7,6 +7,8 @@ import { ormConfig } from './config/orm.config';
 import { ConfigModule } from '@nestjs/config';
 import { ApiModule } from './api/api.module';
 import { RoomsModule } from './rooms/rooms.module';
+import { ChatGateway } from './chat/chat.gateway';
+import { ChatModule } from './chat/chat.module';
 import config from './config/config';
 import * as redisStore from 'cache-manager-ioredis';
 
@@ -39,8 +41,9 @@ import * as redisStore from 'cache-manager-ioredis';
         ],
       },
     }),
+    ChatModule,
   ],
   controllers: [AppController],
-  providers: [AppService],
+  providers: [AppService, ChatGateway],
 })
 export class AppModule {}
