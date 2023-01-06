@@ -8,12 +8,12 @@ const logger: Logger = new Logger('Main');
 
 async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule);
-  app.useStaticAssets("../client/");
+  app.useStaticAssets("../client");
 
   const configService = app.get(ConfigService);
   const port = configService.get<string>('server.port');
   app.use(cookieParser());
-  const whitelist = ['http://localhost:3003',];
+  const whitelist = ['http://localhost:3000'];
   app.enableCors({
     origin: function (origin, callback) {
       if (!origin || whitelist.indexOf(origin) !== -1) {

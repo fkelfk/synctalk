@@ -131,7 +131,7 @@ export class AuthService {
       const kakaoUser = new UserEntity();
       kakaoUser.kakaoId = kakao.id;
       kakaoUser.email = kakao.kakao_account.email;
-      kakaoUser.name = kakao.kakao_account.name;
+      kakaoUser.name = kakao.properties.nickname;
       userFind = await this.userService.registerUser(kakaoUser);
     }
 

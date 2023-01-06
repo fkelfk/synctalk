@@ -39,7 +39,7 @@ export class AuthController {
       httpOnly: true,
       maxAge: 24 * 60 * 60 * 1000, // 1day
     });
-    return res.send({ message: 'success' });
+    return res.send({ message: 'success'});
   }
 
   @Post('/logout')
