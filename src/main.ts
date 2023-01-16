@@ -4,12 +4,12 @@ import * as cookieParser from 'cookie-parser';
 import { ConfigService } from '@nestjs/config';
 import { Logger } from '@nestjs/common';
 import { NestExpressApplication } from '@nestjs/platform-express';
+// import { RedisIoAdapter } from './chat/chat.adapter';
+
 const logger: Logger = new Logger('Main');
 
 async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule);
-  app.useStaticAssets("../client");
-
   const configService = app.get(ConfigService);
   const port = configService.get<string>('server.port');
   app.use(cookieParser());
@@ -28,5 +28,11 @@ async function bootstrap() {
   });
   await app.listen(port);
   logger.log(`Application listening on port ${port}`);
+
+  // const redisIoAdapter = new RedisIoAdapter(app)
+  // await redisIoAdapter.connectToRedis()
+
+  // app.useWebSocketAdapter(redisIoAdapter)
+  // console.log(app.useWebSocketAdapter(redisIoAdapter))
 }
 bootstrap();
