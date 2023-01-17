@@ -20,6 +20,7 @@ import {
   RedisModuleOptions,
 } from '@liaoliaots/nestjs-redis';
 import { ChatService } from './chat/chat.service';
+import * as redisStore from 'cache-manager-ioredis';
 
 @Module({
   imports: [
@@ -37,7 +38,6 @@ import { ChatService } from './chat/chat.service';
         ],
       },
     }),
-    
     // ClusterModule.forRootAsync({
     //   imports: [ConfigModule],
     //   inject: [ConfigService],
