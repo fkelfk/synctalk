@@ -7,7 +7,7 @@
   "license": "UNLICENSED",
   "scripts": {
     "prebuild": "rimraf dist",
-    "build": "yarn copy-files && nest build",
+    "build": "yarn nest build",
     "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
     "start": "yarn copy-files && nest start",
     "start:dev": "nodemon",
@@ -23,6 +23,7 @@
   },
   "dependencies": {
     "@liaoliaots/nestjs-redis": "^9.0.5",
+    "@nestjs-modules/ioredis": "^1.0.1",
     "@nestjs/common": "^9.0.0",
     "@nestjs/config": "^2.2.0",
     "@nestjs/core": "^9.0.0",
@@ -50,7 +51,7 @@
     "cookie-parser": "^1.4.6",
     "cpx": "^1.5.0",
     "cross-env": "^7.0.3",
-    "ioredis": "^5.2.4",
+    "ioredis": "^5.3.1",
     "js-yaml": "^4.1.0",
     "nanoid": "^4.0.0",
     "node-binance-api": "^0.13.1",
