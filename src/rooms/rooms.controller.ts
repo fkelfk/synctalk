@@ -40,7 +40,7 @@ export class RoomsController {
 
   @Get('/:id')
   async getRoom(@Param('id') id: number): Promise<RoomEntity> {
-    return await this.roomsService.getRoom(id);
+    return await this.roomsService.getRoom(id);    
   }
 
   @Delete('/:id')
