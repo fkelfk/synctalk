@@ -11,7 +11,7 @@ export class ChatService {
   async getCache(key: string) {
     return await this.cluster.get(key);
   }
-  async set(key: string, value: string, expire?: number) {
+  async setCache(key: string, value: string, expire?: number) {
     return await this.cluster.set(key, value, 'EX', 10000);
   }
 }

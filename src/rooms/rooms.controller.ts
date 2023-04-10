@@ -8,8 +8,9 @@ import {
   Param,
   Query,
   Delete,
-  Put,
   Patch,
+  UseFilters,
+  UseInterceptors,
 } from '@nestjs/common';
 import { RoomsService } from './rooms.service';
 import { Roles } from 'src/decorator/role.decorator';
@@ -19,7 +20,8 @@ import { RoleType } from 'src/role-type';
 import { RoomEntity } from 'src/domain/room.entity';
 import { RoomDTO } from './dto/room.dto';
 import { PaginationParams } from '../utils/types/paginationParams';
-import { UserEntity } from 'src/domain/user.entity';
+import { QueryFailedExceptionFilter } from 'src/decorator/exceptions.filter';
+import { QuerySpeedInterceptor } from 'src/decorator/query.reunner';
 
 @Controller('rooms')
 export class RoomsController {
@@ -43,6 +45,13 @@ export class RoomsController {
     return await this.roomsService.getRoom(id);    
   }
 
+  @Get('/find/:text')
+  @UseFilters(QueryFailedExceptionFilter)
+  @UseInterceptors(QuerySpeedInterceptor)
+  async findRoomByText(@Param('text') text:string): Promise<RoomEntity[]> {
+    return await this.roomsService.findRoomByText(text);
+  }
+
   @Delete('/:id')
   @UseGuards(AuthGuard, RolesGuard)
   @Roles(RoleType.USER)
@@ -57,5 +66,13 @@ export class RoomsController {
   async updateRoom(@Req() req, @Body() room: RoomDTO,  @Param('id') id) : Promise<void> {
     const user = req.user;
     return this.roomsService.updateRoom(id, room, user.id);
+  }
+
+  @Patch('/update/:roomid')
+  @UseGuards(AuthGuard, RolesGuard)
+  @Roles(RoleType.USER)
+  async updataMultiData(@Req() req, @Body() room: RoomEntity, @Param('roomid') roomid): Promise<void> {
+    const user = req.user;
+    return this.roomsService.updateRoomAnduser(roomid, room.title, room.description, room.user )
   }
 }

@@ -1,10 +1,14 @@
 import {
+  Inject,
   Injectable,
   UnauthorizedException,
+  UseInterceptors,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import { Pool } from 'pg';
 import { RoomEntity } from 'src/domain/room.entity';
 import { UserEntity } from 'src/domain/user.entity';
+import { DataSource, Like } from 'typeorm';
 import { RoomDTO } from './dto/room.dto';
 import { RoomRepository } from './room.repository';
 
@@ -34,6 +38,39 @@ export class RoomsService {
 
   async getRoom(id: number): Promise<RoomEntity> {
     const room = await this.roomRepository.findOne({ where: { id } });
+    return room;
+  }
+
+  async findRoomByText(text: string): Promise<RoomEntity[]> {
+    return await this.roomRepository.find({
+      where: {
+        title: Like(`%${text}%`),
+      },
+    });
+  }
+
+  async updateRoomAnduser(
+    roomid: number,
+    title?: string,
+    description?: string,
+    userdata?: UserEntity,
+  ): Promise<any> {
+    const data = {
+      title: title,
+      description: description,
+      user: userdata,
+    };
+    const room = this.roomRepository
+      .createQueryBuilder('room')
+      .leftJoinAndSelect('room.user', 'user')
+      .update()
+      .set({
+        title: data.title,
+        description: data.description,
+        user: { username: data.user.username },
+      })
+      .where('room.id = :id', { roomid });
+
     return room;
   }
 

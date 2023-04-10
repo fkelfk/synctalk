@@ -6,6 +6,17 @@ import { RoomEntity } from 'src/domain/room.entity';
 import { UserEntity } from 'src/domain/user.entity';
 import { TypeOrmExModule } from 'src/typeorm-ex.module';
 import { RoomRepository } from './room.repository';
+import { ConfigService } from '@nestjs/config';
+import { Pool } from 'pg';
+
+const databasePoolFactory = async (configService: ConfigService) => {
+  return new Pool({
+    user: configService.get('POSTGRES_USER'),
+    host: configService.get('POSTGRES_HOST'),
+    database: configService.get('POSTGRES_DB'),
+    port: configService.get('POSTGRES_LOCAL_PORT'),
+  });
+};
 
 @Module({
   imports: [
@@ -15,7 +26,11 @@ import { RoomRepository } from './room.repository';
     ]),
   ],
   exports: [TypeOrmModule],
-  providers: [RoomsService],
+  providers: [RoomsService,{
+    provide: 'DATABASE_POOL',
+    inject: [ConfigService],
+    useFactory: databasePoolFactory,
+  },],
   controllers: [RoomsController]
 })
 export class RoomsModule {}

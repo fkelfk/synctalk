@@ -11,6 +11,7 @@ import { ChatModule } from './chat/chat.module';
 import config from './config/config';
 import { ClusterModule } from '@liaoliaots/nestjs-redis';
 
+
 @Module({
   imports: [
     ConfigModule.forRoot({

@@ -11,7 +11,7 @@ import {
   BadRequestException,
   UnauthorizedException,
 } from '@nestjs/common';
-import { Response, Request} from 'express';
+import { Response, Request } from 'express';
 import { Roles } from 'src/decorator/role.decorator';
 import { RoleType } from 'src/role-type';
 import { AuthService } from './auth.service';
@@ -39,7 +39,7 @@ export class AuthController {
       httpOnly: true,
       maxAge: 24 * 60 * 60 * 1000, // 1day
     });
-    return res.send({ message: 'success'});
+    return res.send({ message: 'success' });
   }
 
   @Post('/logout')
@@ -67,29 +67,28 @@ export class AuthController {
 
   @Post('/kakao')
   async kakao(@Body() body: any, @Res() res: Response): Promise<any> {
-      try {
+    try {
       // 카카오 토큰 조회 후 계정 정보 가져오기
       const { code, domain } = body;
       if (!code || !domain) {
-          throw new BadRequestException('카카오 정보가 없습니다.');
+        throw new BadRequestException('카카오 정보가 없습니다.');
       }
       const kakao = await this.authService.kakaoLogin({ code, domain });
 
       console.log(`kakaoUserInfo : ${JSON.stringify(kakao)}`);
       if (!kakao.id) {
-          throw new BadRequestException('카카오 로그인 실패.');
+        throw new BadRequestException('카카오 로그인 실패.');
       }
 
       const jwt = await this.authService.login(kakao);
 
-
       res.send({
-          accessToken: jwt.accessToken,
-          message: 'success',
+        accessToken: jwt.accessToken,
+        message: 'success',
       });
-      } catch (e) {
-          console.log(e);
-          throw new UnauthorizedException();
-      }
+    } catch (e) {
+      console.log(e);
+      throw new UnauthorizedException();
+    }
   }
 }

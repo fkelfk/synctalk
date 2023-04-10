@@ -1,6 +1,6 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { FindOneOptions } from 'typeorm';
+import { FindOneOptions, Like } from 'typeorm';
 import { UserDTO } from './dto/user.dto';
 import { UserEntity } from '../domain/user.entity';
 import { Repository } from 'typeorm';
@@ -49,7 +49,7 @@ export class UserService {
   }
 
   async save(userDTO: UserDTO): Promise<UserEntity | undefined> {
-    if (userDTO.password)await this.transformPassword(userDTO);
+    if (userDTO.password) await this.transformPassword(userDTO);
     return await this.userRepository.save(userDTO);
   }
-}
+} 
