@@ -1,6 +1,7 @@
 import {
   Column,
   Entity,
+  Index,
   JoinColumn,
   ManyToOne,
   PrimaryGeneratedColumn,
@@ -10,6 +11,7 @@ import { UserEntity } from './user.entity';
 @Entity('rooms')
 export class RoomEntity {
   @PrimaryGeneratedColumn()
+  @Index()
   id: number;
 
   @Column('varchar', { name: 'title', length: 45 })
@@ -17,6 +19,9 @@ export class RoomEntity {
 
   @Column('varchar', { name: 'description', length: 400 })
   description: string;
+
+  @Column('varchar', { name: 'roomCode', length: 45, nullable: true })
+  roomCode: string;
 
   @Column('timestamp', {
     name: 'created_at',

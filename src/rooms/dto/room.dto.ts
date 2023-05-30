@@ -6,3 +6,11 @@ export class RoomDTO {
   @IsNotEmpty()
   description: string;
 }
+
+export class JoinRoomDTO {
+  @IsNotEmpty()
+  title: string;
+  roomId: string;
+}
+
+

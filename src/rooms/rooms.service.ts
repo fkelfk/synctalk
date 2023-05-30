@@ -1,14 +1,9 @@
-import {
-  Inject,
-  Injectable,
-  UnauthorizedException,
-  UseInterceptors,
-} from '@nestjs/common';
+import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Pool } from 'pg';
+import { createRoomID, createUserID } from 'ids';
 import { RoomEntity } from 'src/domain/room.entity';
 import { UserEntity } from 'src/domain/user.entity';
-import { DataSource, Like } from 'typeorm';
+import { Like } from 'typeorm';
 import { RoomDTO } from './dto/room.dto';
 import { RoomRepository } from './room.repository';
 
@@ -19,12 +14,27 @@ export class RoomsService {
   ) {}
 
   async createRoom(room: RoomDTO, user: UserEntity): Promise<RoomEntity> {
+    const roomCode = createRoomID();
     const roominfo = new RoomEntity();
     (roominfo.title = room.title),
       (roominfo.description = room.description),
+      (roominfo.roomCode = roomCode),
       (roominfo.user = user);
 
     return await this.save(roominfo);
+  }
+
+  async joinRoom(roomCode: string) {
+    const userId = createUserID();
+    const room = await this.roomRepository.find({
+      where: {
+        roomCode: Like(`%${roomCode}%`),
+      },
+    });
+    return {
+      room,
+      userId,
+    };
   }
 
   async getAllRoom(offset?: number, limit?: number) {
@@ -32,7 +42,6 @@ export class RoomsService {
       skip: offset,
       take: limit,
     });
-
     return { items, count };
   }
 
@@ -93,5 +102,32 @@ export class RoomsService {
 
   async save(room: RoomDTO): Promise<RoomEntity> {
     return await this.roomRepository.save(room);
+  }
+
+  async paginationCoveringIndex(
+    offset?: number,
+    limit?: number,
+  ): Promise<[RoomEntity[], number]> {
+    const coveringIndexQueryBuilder = this.roomRepository
+      .createQueryBuilder('cover')
+      .select('cover.id')
+      .orderBy('cover.id')
+      .offset(offset)
+      .limit(limit);
+
+    const count = await coveringIndexQueryBuilder.getCount();
+
+    const rooms = await this.roomRepository
+      .createQueryBuilder('rooms')
+      .innerJoin(
+        `(${coveringIndexQueryBuilder.getQuery()})`,
+        'cover',
+        'rooms.id = cover_id',
+      )
+      .innerJoinAndSelect('rooms.user', 'user')
+      .select(['rooms', 'user'])
+      .getMany();
+
+    return [rooms, count];
   }
 }

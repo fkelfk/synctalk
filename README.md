@@ -1,4 +1,4 @@
-# crypto lounge API
+# Sync Talk
 
 ````bash
 yarn install

@@ -11,10 +11,11 @@ import { Pool } from 'pg';
 
 const databasePoolFactory = async (configService: ConfigService) => {
   return new Pool({
-    user: configService.get('POSTGRES_USER'),
-    host: configService.get('POSTGRES_HOST'),
-    database: configService.get('POSTGRES_DB'),
-    port: configService.get('POSTGRES_LOCAL_PORT'),
+    database: 'downbit',
+    host: 'localhost',
+    port: 5432,
+    user:'postgres',
+    password: 'aleh',
   });
 };
 

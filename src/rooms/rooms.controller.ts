@@ -22,6 +22,7 @@ import { RoomDTO } from './dto/room.dto';
 import { PaginationParams } from '../utils/types/paginationParams';
 import { QueryFailedExceptionFilter } from 'src/decorator/exceptions.filter';
 import { QuerySpeedInterceptor } from 'src/decorator/query.reunner';
+import { QuerySpeedInterceptor2 } from 'src/decorator/query.log';
 
 @Controller('rooms')
 export class RoomsController {
@@ -34,21 +35,32 @@ export class RoomsController {
     const user = req.user;
     return await this.roomsService.createRoom(room, user.id);
   }
-
+  @UseInterceptors(QuerySpeedInterceptor)
   @Get('/main')
   async getAllRoom(@Query() { offset, limit }: PaginationParams) {
     return await this.roomsService.getAllRoom(offset, limit);
   }
 
+  @UseInterceptors(QuerySpeedInterceptor)
+  @Get('/index')
+  async paginationCoveringIndex1(@Query() { offset, limit }: PaginationParams) {
+    return await this.roomsService.paginationCoveringIndex(offset, limit);
+  }
+
+  @Get('/join')
+  async join(@Body() roomCode: string) {
+    return await this.roomsService.joinRoom(roomCode);
+  }
+
   @Get('/:id')
   async getRoom(@Param('id') id: number): Promise<RoomEntity> {
-    return await this.roomsService.getRoom(id);    
+    return await this.roomsService.getRoom(id);
   }
 
   @Get('/find/:text')
   @UseFilters(QueryFailedExceptionFilter)
-  @UseInterceptors(QuerySpeedInterceptor)
-  async findRoomByText(@Param('text') text:string): Promise<RoomEntity[]> {
+  @UseInterceptors(QuerySpeedInterceptor2)
+  async findRoomByText(@Param('text') text: string): Promise<RoomEntity[]> {
     return await this.roomsService.findRoomByText(text);
   }
 
@@ -63,7 +75,11 @@ export class RoomsController {
   @Patch('/:id')
   @UseGuards(AuthGuard, RolesGuard)
   @Roles(RoleType.USER)
-  async updateRoom(@Req() req, @Body() room: RoomDTO,  @Param('id') id) : Promise<void> {
+  async updateRoom(
+    @Req() req,
+    @Body() room: RoomDTO,
+    @Param('id') id,
+  ): Promise<void> {
     const user = req.user;
     return this.roomsService.updateRoom(id, room, user.id);
   }
@@ -71,8 +87,17 @@ export class RoomsController {
   @Patch('/update/:roomid')
   @UseGuards(AuthGuard, RolesGuard)
   @Roles(RoleType.USER)
-  async updataMultiData(@Req() req, @Body() room: RoomEntity, @Param('roomid') roomid): Promise<void> {
+  async updataMultiData(
+    @Req() req,
+    @Body() room: RoomEntity,
+    @Param('roomid') roomid,
+  ): Promise<void> {
     const user = req.user;
-    return this.roomsService.updateRoomAnduser(roomid, room.title, room.description, room.user )
+    return this.roomsService.updateRoomAnduser(
+      roomid,
+      room.title,
+      room.description,
+      room.user,
+    );
   }
 }

@@ -11,8 +11,10 @@ async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule);
   const configService = app.get(ConfigService);
   const port = configService.get<string>('server.port');
+  const whitelist_port = configService.get<string>('WHITELIST_PORT');
+
   app.use(cookieParser());
-  const whitelist = ['http://localhost:3000'];
+  const whitelist = [`http://localhost:${whitelist_port}`];
   app.enableCors({
     origin: function (origin, callback) {
       if (!origin || whitelist.indexOf(origin) !== -1) {
