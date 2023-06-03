@@ -22,12 +22,13 @@ export class ChatRepository {
     this.ttl = configService.get('CHAT_DURATION');
   }
 
-  async createChat({ topic, roomID, userID }: CreateRoomData): Promise<Chat> {
+  async createChat({ topic, roomID, userID, name }: CreateRoomData): Promise<Chat> {
     const initialRoom = {
-      id: roomID,
+      roomid: roomID,
       topic,
       participants: {},
       adminID: userID,
+      name: name
     };
 
     this.logger.log(
@@ -101,7 +102,7 @@ export class ChatRepository {
         `Failed to add a participant with userID/name: ${userID}/${name} to roomID: ${roomID}`,
       );
       throw new InternalServerErrorException(
-        `Failed to add a participant with userID/name: ${userID}/${name} to pollID: ${roomID}`,
+        `Failed to add a participant with userID/name: ${userID}/${name} to roomID: ${roomID}`,
       );
     }
   }

@@ -3,9 +3,10 @@ export interface Participants {
 }
 
 export interface Chat {
-    id: string
+    roomid: string
     topic: string
     adminID: string
+    name: string
 }
 
 export interface ClusterNodes{

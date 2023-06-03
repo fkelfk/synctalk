@@ -13,6 +13,10 @@ export class CreateChatDto {
   @IsString()
   @Length(1, 100)
   topic: string;
+
+  @IsString()
+  @Length(1, 100)
+  name: string;
 }
 
 export class JoinChatDto {
@@ -22,6 +26,10 @@ export class JoinChatDto {
 
   @IsString()
   @Length(1, 25)
+  title: string;
+
+  @IsString()
+  @Length(1, 100)
   name: string;
 }
 

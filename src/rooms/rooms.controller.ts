@@ -22,7 +22,6 @@ import { RoomDTO } from './dto/room.dto';
 import { PaginationParams } from '../utils/types/paginationParams';
 import { QueryFailedExceptionFilter } from 'src/decorator/exceptions.filter';
 import { QuerySpeedInterceptor } from 'src/decorator/query.reunner';
-import { QuerySpeedInterceptor2 } from 'src/decorator/query.log';
 
 @Controller('rooms')
 export class RoomsController {
@@ -35,13 +34,12 @@ export class RoomsController {
     const user = req.user;
     return await this.roomsService.createRoom(room, user.id);
   }
-  @UseInterceptors(QuerySpeedInterceptor)
+  
   @Get('/main')
   async getAllRoom(@Query() { offset, limit }: PaginationParams) {
     return await this.roomsService.getAllRoom(offset, limit);
   }
 
-  @UseInterceptors(QuerySpeedInterceptor)
   @Get('/index')
   async paginationCoveringIndex1(@Query() { offset, limit }: PaginationParams) {
     return await this.roomsService.paginationCoveringIndex(offset, limit);
@@ -59,7 +57,6 @@ export class RoomsController {
 
   @Get('/find/:text')
   @UseFilters(QueryFailedExceptionFilter)
-  @UseInterceptors(QuerySpeedInterceptor2)
   async findRoomByText(@Param('text') text: string): Promise<RoomEntity[]> {
     return await this.roomsService.findRoomByText(text);
   }
