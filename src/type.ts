@@ -4,7 +4,7 @@ export interface Participants {
 
 export interface Chat {
     roomid: string
-    topic: string
+    title: string
     adminID: string
     name: string
 }

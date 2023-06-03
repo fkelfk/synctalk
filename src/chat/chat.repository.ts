@@ -22,10 +22,10 @@ export class ChatRepository {
     this.ttl = configService.get('CHAT_DURATION');
   }
 
-  async createChat({ topic, roomID, userID, name }: CreateRoomData): Promise<Chat> {
+  async createChat({ title, roomID, userID, name }: CreateRoomData): Promise<Chat> {
     const initialRoom = {
       roomid: roomID,
-      topic,
+      title,
       participants: {},
       adminID: userID,
       name: name
@@ -55,21 +55,21 @@ export class ChatRepository {
     }
   }
 
-  async getChat(roomID: string): Promise<Chat> {
+  async getChat(roomID: string) {
     this.logger.log(`Attempting to get chat with: ${roomID}`);
 
     const key = `rooms:${roomID}`;
 
     try {
-      const currentRoom = (await this.redisClient.call(
+      const currentRoom = await this.redisClient.call(
         'JSON.GET',
         key,
         '.',
-      )) as Chat;
+      ) as string;
 
       this.logger.verbose(currentRoom);
 
-      return currentRoom;
+      return JSON.parse(currentRoom);;
     } catch (e) {
       this.logger.error(`Failed to get roomID ${roomID}`);
       throw e;

@@ -1,7 +1,6 @@
 export type CreateRoomFields = {
   title: string;
   description: string;
-  topic: string;
   name: string
 };
 
@@ -19,7 +18,7 @@ export type RejoinRoomFields = {
 };
 export type CreateRoomData = {
   roomID: string;
-  topic: string;
+  title: string;
   userID: string;
   name: string
 };

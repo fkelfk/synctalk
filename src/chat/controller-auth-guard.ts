@@ -23,7 +23,6 @@ import { RequestWithAuth } from '../auth/security/payload.interface';
       try {
         const payload = this.jwtService.verify(accessToken);
         console.log(payload)
-        // append user and poll to socket
         request.userID = payload.sub;
         request.roomID = payload.roomID;
         request.title = payload.title;
