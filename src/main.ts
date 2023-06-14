@@ -4,6 +4,7 @@ import * as cookieParser from 'cookie-parser';
 import { ConfigService } from '@nestjs/config';
 import { Logger } from '@nestjs/common';
 import { NestExpressApplication } from '@nestjs/platform-express';
+import { SocketIOAdapter } from './socket-io.adapter';
 
 const logger: Logger = new Logger('Main');
 
@@ -27,6 +28,7 @@ async function bootstrap() {
     methods: 'GET,PUT,PATCH,POST,DELETE,UPDATE,OPTIONS',
     credentials: true,
   });
+  app.useWebSocketAdapter(new SocketIOAdapter(app, configService));
   await app.listen(port);
   logger.log(`Application listening on port ${port}`);
 }

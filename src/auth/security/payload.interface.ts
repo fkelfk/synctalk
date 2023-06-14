@@ -1,5 +1,6 @@
 
  import { Request } from 'express';
+import { Socket } from 'socket.io';
 
 export interface Payload {
   id: number;
@@ -25,3 +26,5 @@ export type ChatPayload = {
 };
 
 export type RequestWithAuth = Request & ChatPayload;
+
+export type SocketWithAuth = Socket & ChatPayload;

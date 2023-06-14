@@ -9,6 +9,7 @@ import { ApiModule } from './api/api.module';
 import { RoomsModule } from './rooms/rooms.module';
 import { ChatModule } from './chat/chat.module';
 import config from './config/config';
+import { jwtModule } from './modules.config';
 
 @Module({
   imports: [
