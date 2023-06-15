@@ -20,7 +20,7 @@ import { RoleType } from 'src/role-type';
 import { RoomEntity } from 'src/domain/room.entity';
 import { RoomDTO } from './dto/room.dto';
 import { PaginationParams } from '../utils/types/paginationParams';
-import { QueryFailedExceptionFilter } from 'src/decorator/exceptions.filter';
+import { QueryFailedExceptionFilter } from 'src/decorator/query.exceptions.filter';
 import { QuerySpeedInterceptor } from 'src/decorator/query.reunner';
 
 @Controller('rooms')

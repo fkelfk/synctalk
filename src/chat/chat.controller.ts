@@ -1,11 +1,11 @@
-import { Body, Controller, Post, Req, Res, UseGuards } from '@nestjs/common';
+import { Body, Controller, Post, Req, Res, UseGuards, UsePipes, ValidationPipe } from '@nestjs/common';
 import { ChatService } from './chat.service';
 import { CreateChatDto, JoinChatDto } from './dto/chat.Dto';
 import { Response } from 'express';
-import { AuthGuard } from 'src/auth/security/auth.guard';
-import { ChatPayload, RequestWithAuth } from 'src/auth/security/payload.interface';
+import { RequestWithAuth } from 'src/auth/security/payload.interface';
 import { ControllerAuthGuard } from './controller-auth-guard';
 
+@UsePipes(new ValidationPipe())
 @Controller('chat')
 export class ChatController {
   constructor(private chatService: ChatService) {}
@@ -48,7 +48,7 @@ export class ChatController {
       userID,
       roomID,
       title,
-      name
+      name,
     });
 
     return result;

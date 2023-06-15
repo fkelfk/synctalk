@@ -21,24 +21,24 @@
 // // }
 // )
 // export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, OnGatewayInit {
-//   private readonly logger = new Logger(ChatGateway.name) 
+//   private readonly logger = new Logger(ChatGateway.name)
 //   constructor(private readonly chatService: ChatService){}
 
 //   afterInit(): void {
 //     this.logger.log('Websocket Gateway Initaialized')
 //   }
 
-  // @WebSocketServer()
-  // io: Namespace;
-  // server: Server;
-  // users: number = 0;
+// @WebSocketServer()
+// io: Namespace;
+// server: Server;
+// users: number = 0;
 
-  // @UseGuards(AuthGuard, RolesGuard)
-  // @Roles(RoleType.USER)
-  // async handleConnection() {
-  //   this.users++;
-  //   this.server.emit('users', this.users);
-  // }
+// @UseGuards(AuthGuard, RolesGuard)
+// @Roles(RoleType.USER)
+// async handleConnection() {
+//   this.users++;
+//   this.server.emit('users', this.users);
+// }
 
 //   async handleDisconnect() {
 //     this.users--;
@@ -51,19 +51,28 @@
 //   }
 // }
 
-import { Logger } from '@nestjs/common';
+import {
+  Logger,
+  UseFilters,
+  UsePipes,
+  ValidationPipe,
+} from '@nestjs/common';
 import {
   OnGatewayInit,
   WebSocketGateway,
   OnGatewayConnection,
   OnGatewayDisconnect,
   WebSocketServer,
+  SubscribeMessage,
 } from '@nestjs/websockets';
 import { Namespace } from 'socket.io';
 import { ChatService } from './chat.service';
 import { SocketWithAuth } from 'src/auth/security/payload.interface';
+import { WsBadRequestException } from 'src/decorator/ws.exceptions';
+import { WsCatchAllFilter } from 'src/decorator/ws.catch.all.filter';
 
-
+@UsePipes(new ValidationPipe())
+@UseFilters(new WsCatchAllFilter())
 @WebSocketGateway({
   namespace: 'chats',
 })
@@ -74,8 +83,6 @@ export class ChatGateway
   constructor(private readonly chatService: ChatService) {}
 
   @WebSocketServer() io: Namespace;
-
-  
 
   afterInit(): void {
     this.logger.log(`Websocket Gateway initialized.`);
@@ -102,6 +109,5 @@ export class ChatGateway
 
     this.logger.log(`Disconnected socket id: ${client.id}`);
     this.logger.debug(`Number of connected sockets: ${sockets.size}`);
-
   }
 }

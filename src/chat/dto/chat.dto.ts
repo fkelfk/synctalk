@@ -9,7 +9,6 @@ export class CreateChatDto {
   @Length(1, 200)
   description: string;
 
-
   @IsString()
   @Length(1, 100)
   topic: string;
@@ -18,7 +17,7 @@ export class CreateChatDto {
   @Length(1, 100)
   name: string;
 }
-
+ 
 export class JoinChatDto {
   @IsString()
   @Length(6, 6)
