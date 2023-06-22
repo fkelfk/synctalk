@@ -24,10 +24,6 @@ export class JoinChatDto {
   roomID: string;
 
   @IsString()
-  @Length(1, 25)
-  title: string;
-
-  @IsString()
   @Length(1, 100)
   name: string;
 }

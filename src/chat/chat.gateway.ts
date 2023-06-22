@@ -51,12 +51,7 @@
 //   }
 // }
 
-import {
-  Logger,
-  UseFilters,
-  UsePipes,
-  ValidationPipe,
-} from '@nestjs/common';
+import { Logger, UseFilters, UsePipes, ValidationPipe } from '@nestjs/common';
 import {
   OnGatewayInit,
   WebSocketGateway,
@@ -68,7 +63,6 @@ import {
 import { Namespace } from 'socket.io';
 import { ChatService } from './chat.service';
 import { SocketWithAuth } from 'src/auth/security/payload.interface';
-import { WsBadRequestException } from 'src/decorator/ws.exceptions';
 import { WsCatchAllFilter } from 'src/decorator/ws.catch.all.filter';
 
 @UsePipes(new ValidationPipe())
@@ -88,7 +82,7 @@ export class ChatGateway
     this.logger.log(`Websocket Gateway initialized.`);
   }
 
-  handleConnection(client: SocketWithAuth) {
+  async handleConnection(client: SocketWithAuth) {
     const sockets = this.io.sockets;
     this.logger.debug(
       `Socket connected with userID: ${client.userID}, roomID: ${client.roomID}, and name: "${client.name}"`,
@@ -97,17 +91,47 @@ export class ChatGateway
     this.logger.log(`WS Client with id: ${client.id} connected!`);
     this.logger.debug(`Number of connected sockets: ${sockets.size}`);
 
-    this.io.emit('hello', `from ${client.id}`);
-  }
+    const roomName = client.roomID;
+    await client.join(roomName);
 
-  handleDisconnect(client: SocketWithAuth) {
-    const sockets = this.io.sockets;
+    const connectedClients = this.io.adapter.rooms?.get(roomName)?.size ?? 0;
 
     this.logger.debug(
-      `Socket connected with userID: ${client.userID}, roomID: ${client.roomID}, and name: "${client.name}"`,
+      `userID: ${client.userID} joined room with name ${roomName}`,
+    );
+    this.logger.debug(
+      `Total clients connented to room '${roomName}': ${connectedClients}`,
     );
 
+    const updatedChat = await this.chatService.addParticipant({
+      roomID: client.roomID,
+      userID: client.userID,
+      title: client.title,
+      name: client.name,
+    });
+
+    this.io.to(roomName).emit('chat_updated', updatedChat);
+  }
+
+  async handleDisconnect(client: SocketWithAuth) {
+    const socket = this.io.sockets;
+    const { roomID, userID } = client;
+    const updatedChat = await this.chatService.removeParticipants(
+      roomID,
+      userID,
+    );
+
+    const roomName = client.roomID;
+    const clientCount = this.io.adapter.rooms?.get(roomName)?.size ?? 0;
+
     this.logger.log(`Disconnected socket id: ${client.id}`);
-    this.logger.debug(`Number of connected sockets: ${sockets.size}`);
+    this.logger.debug(`Number of connected sockets: ${socket.size}`);
+    this.logger.debug(
+      `Total clients connected to room '${roomName}': ${clientCount}`,
+    );
+
+    if (updatedChat) {
+      this.io.to(roomID).emit('chat_updated', updatedChat);
+    }
   }
 }

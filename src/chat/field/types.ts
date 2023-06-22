@@ -6,7 +6,6 @@ export type CreateRoomFields = {
 
 export type JoinRoomFields = {
   roomID: string;
-  title: string;
   name: string
 };
 
@@ -23,7 +22,7 @@ export type CreateRoomData = {
   name: string
 };
 
-export type AddParticipantFields = {
+export interface AddParticipantFields {
   roomID: string;
   userID: string;
   title: string;
@@ -35,3 +34,8 @@ export type AddParticipantData = {
   userID: string;
   name: string;
 };
+
+export interface RemoveParticipantData {
+  roomID: string;
+  userID: string;
+}

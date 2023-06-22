@@ -1,6 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { createRoomID, createUserID } from 'ids';
 import {
+  AddParticipantFields,
   CreateRoomFields,
   JoinRoomFields,
   RejoinRoomFields,
@@ -11,6 +12,7 @@ import {
   ChatPayload1,
   ChatPayload2,
 } from 'src/auth/security/payload.interface';
+import { Chat } from 'src/type';
 
 @Injectable()
 export class ChatService {
@@ -61,8 +63,8 @@ export class ChatService {
     );
 
     const joinedChat = await this.chatRepository.getChat(fields.roomID);
-    console.log(joinedChat.roomid)
-    console.log(joinedChat.title)
+    console.log(joinedChat.roomid);
+    console.log(joinedChat.title);
 
     this.logger.debug(
       `Creating token string for roomID: ${joinedChat.roomid} and userID: ${userID}`,
@@ -71,7 +73,7 @@ export class ChatService {
     const payload1: ChatPayload1 = {
       roomID: joinedChat.roomid,
       name: fields.name,
-      title: fields.title,
+      title: joinedChat.title,
     };
 
     const payload2: ChatPayload2 = {
@@ -94,5 +96,24 @@ export class ChatService {
     const joinedChat = await this.chatRepository.addParticipant(fields);
 
     return joinedChat;
+  }
+
+  async addParticipant(addParticipant: AddParticipantFields): Promise<Chat> {
+    return this.chatRepository.addParticipant(addParticipant);
+  }
+
+  async removeParticipants(
+    roomID: string,
+    userID: string,
+  ): Promise<Chat | void> {
+    const chat = await this.chatRepository.getChat(roomID);
+
+    if (!chat.hasStarted) {
+      const updatedChat = await this.chatRepository.removeParticipant(
+        roomID,
+        userID,
+      );
+      return updatedChat;
+    }
   }
 }

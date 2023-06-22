@@ -16,13 +16,13 @@ export class ChatController {
     @Res() res: Response,
   ): Promise<any> {
     const response = await this.chatService.createChatRoom(createChatRoomDto);
-    const data = response.chat;
+    // const data = response.chat;
     res.setHeader('Authorization', 'Bearer ' + response.accessToken);
     res.cookie('jwt', response.accessToken, {
       httpOnly: true,
       maxAge: 24 * 60 * 60 * 1000, // 1day
     });
-    return res.send({ message: 'success', data: data });
+    return res.send({ message: 'success', data: response });
   }
 
   @Post('/join')
@@ -31,13 +31,12 @@ export class ChatController {
     @Res() res: Response,
   ): Promise<any> {
     const response = await this.chatService.joinChatRoom(JoinChatDto);
-    const data = response.chat;
     res.setHeader('Authorization', 'Bearer ' + response.accessToken);
     res.cookie('jwt', response.accessToken, {
       httpOnly: true,
       maxAge: 24 * 60 * 60 * 1000, // 1day
     });
-    return res.send({ message: 'success', data: data });
+    return res.send({ message: 'success', data: response });
   }
 
   @UseGuards(ControllerAuthGuard)

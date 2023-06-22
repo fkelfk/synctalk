@@ -22,13 +22,19 @@ export class ChatRepository {
     this.ttl = configService.get('CHAT_DURATION');
   }
 
-  async createChat({ title, roomID, userID, name }: CreateRoomData): Promise<Chat> {
+  async createChat({
+    title,
+    roomID,
+    userID,
+    name,
+  }: CreateRoomData): Promise<Chat> {
     const initialRoom = {
       roomid: roomID,
       title,
       participants: {},
       adminID: userID,
-      name: name
+      name: name,
+      hasStarted: false
     };
 
     this.logger.log(
@@ -61,15 +67,15 @@ export class ChatRepository {
     const key = `rooms:${roomID}`;
 
     try {
-      const currentRoom = await this.redisClient.call(
+      const currentRoom = (await this.redisClient.call(
         'JSON.GET',
         key,
         '.',
-      ) as string;
+      )) as string;
 
       this.logger.verbose(currentRoom);
 
-      return JSON.parse(currentRoom);;
+      return JSON.parse(currentRoom);
     } catch (e) {
       this.logger.error(`Failed to get roomID ${roomID}`);
       throw e;
@@ -104,6 +110,25 @@ export class ChatRepository {
       throw new InternalServerErrorException(
         `Failed to add a participant with userID/name: ${userID}/${name} to roomID: ${roomID}`,
       );
+    }
+  }
+
+  async removeParticipant(roomID: string, userID: string): Promise<Chat> {
+    this.logger.log(`removing userID: ${userID} from room: ${roomID}`);
+
+    const key = `rooms:${roomID}`;
+    const participantPath = `.participants.${userID}`;
+
+    try {
+      await this.redisClient.call('JSON.DEL', key, participantPath);
+
+      return this.getChat(roomID);
+    } catch (e) {
+      this.logger.error(
+        `Failed to remove userID: ${userID} from room: ${roomID}`,
+        e,
+      );
+      throw new InternalServerErrorException('Failed to remove participant');
     }
   }
 }
